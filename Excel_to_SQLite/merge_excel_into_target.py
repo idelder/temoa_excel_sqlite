@@ -21,16 +21,22 @@ def merge_database(db):
 
     con.execute("BEGIN")
 
-    for table in con.execute("SELECT * FROM dba.sqlite_master WHERE type='table'"):
-        t = table[1]
+    master_tables = [table[1] for table in con.execute("SELECT * FROM sqlite_master WHERE type='table'")]
+    tables = [table[1] for table in con.execute("SELECT * FROM dba.sqlite_master WHERE type='table'")]
+
+    for t in tables:
+
+        if (t not in master_tables):
+            print(f"Table {t} not in target database and so was ignored.")
+            continue
 
         master_columns = [d[0] for d in con.execute(f"SELECT * FROM {t} WHERE 1=0;").description]
         columns = [d[0] for d in con.execute(f"SELECT * FROM dba.{t} WHERE 1=0;").description]
         
         for col in columns:
             if (col not in master_columns):
-                sql = con.execute(f"ALTER TABLE dba.{t} DROP COLUMN {col}")
-                print(f"{col} not in target table {t} and so was ignored.")
+                sql = con.execute(f"ALTER TABLE dba.{t} DROP COLUMN '{col}'")
+                print(f"Column {col} not in target table {t} and so was ignored.")
 
         combine = f"INSERT OR IGNORE INTO {t} SELECT * FROM dba.{t}"
         con.execute(combine)

@@ -35,6 +35,7 @@ for table in tables:
     headers.append({"header": "additional notes"})
 
     worksheet.add_table(0,0,100,len(headers)-1,{"columns": headers})
-    worksheet.set_column(0,len(headers)-1,20)
+    worksheet.set_column(0,len(headers)-3,20)
+    worksheet.set_column(len(headers)-2,len(headers)-1,60)
 
 workbook.close()

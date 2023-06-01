@@ -31,7 +31,7 @@ for table in tables:
         # except:pass
         headers.append({"header": desc[0]})
 
-    headers.append({"header": "source"})
+    headers.append({"header": "reference"})
     headers.append({"header": "additional notes"})
 
     worksheet.add_table(0,0,100,len(headers)-1,{"columns": headers})
